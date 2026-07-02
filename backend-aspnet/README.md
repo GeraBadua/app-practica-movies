@@ -1,16 +1,18 @@
-# Backend - ASP.NET Core 10 Web API
+# Backend - ASP.NET Core 9 Web API
 
-API REST de la app de películas hecha con .NET 10.
+API REST de la app de películas con .NET 9, Entity Framework Core + MySQL y documentación interactiva via Scalar.
+
+## Requisitos
+
+- [.NET 9 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+- MySQL o MariaDB corriendo
 
 ## Comandos
 
 ```bash
-# Restaurar dependencias
 dotnet restore
-
-# Correr en modo desarrollo
 dotnet run --launch-profile https
-# La API queda en https://localhost:7208 (con https) o http://localhost:5163
+# API en https://localhost:7208 (https) o http://localhost:5163
 
 # Build
 dotnet build
@@ -18,30 +20,43 @@ dotnet build
 
 ## Endpoints
 
-Todavía no tengo los endpoints de películas, solo está el que viene por defecto:
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/api/directors` | Listar directores |
+| `GET` | `/api/directors/{id}` | Obtener director por ID |
+| `POST` | `/api/directors` | Crear director |
+| `PUT` | `/api/directors/{id}` | Actualizar director |
+| `DELETE` | `/api/directors/{id}` | Eliminar director |
+| `GET` | `/api/movies` | Listar películas (con director) |
+| `GET` | `/api/movies/{id}` | Obtener película por ID |
+| `POST` | `/api/movies` | Crear película |
+| `PUT` | `/api/movies/{id}` | Actualizar película |
+| `DELETE` | `/api/movies/{id}` | Eliminar película |
+
+## Documentación interactiva
+
+Con el servidor corriendo en modo desarrollo, abre:
 
 ```
-GET  /weatherforecast     → ejemplo de json de clima
+https://localhost:7208/scalar/v1
 ```
-
-Próximamente:
-- `GET /api/movies` → listar películas
-- `GET /api/movies/{id}` → película por id
-- `POST /api/movies` → crear película
-- `PUT /api/movies/{id}` → actualizar
-- `DELETE /api/movies/{id}` → eliminar
-- `GET /api/directors` → listar directores
-- etc.
 
 ## Estructura
 
 ```
 backend-aspnet/
-├── Program.cs                        # entry point (ahi esta todo por ahora)
-├── backend-aspnet.csproj             # depende de Microsoft.AspNetCore.OpenApi
-├── appsettings.json                  # config general
-├── appsettings.Development.json      # config de desarrollo (no se sube)
+├── Controllers/
+│   ├── DirectorsController.cs    # CRUD de directores
+│   └── MoviesController.cs       # CRUD de películas
+├── Models/
+│   ├── Director.cs
+│   └── Movie.cs
+├── Data/
+│   └── ApplicationDbContext.cs
+├── Program.cs                    # Entry point (CORS, Scalar, EF, OpenAPI)
+├── backend-aspnet.csproj         # net9.0 + EF Core + Pomelo + Scalar
+├── appsettings.json              # Conexión MySQL
+├── appsettings.Development.json  # Config desarrollo
 └── Properties/
-    └── launchSettings.json           # perfiles de ejecución (puertos)
+    └── launchSettings.json       # Puertos y perfiles
 ```
-

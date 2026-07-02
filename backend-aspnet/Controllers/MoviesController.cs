@@ -46,16 +46,20 @@ namespace backend_aspnet.Controllers
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            // VALIDACIÓN CORREGIDA: Usamos solo DirectorId que es el nombre real en la clase C#
+            // Validamos que el ID del director que mandó el front realmente exista
             var directorExists = await _context.Directors.AnyAsync(d => d.Id == movie.DirectorId);
 
             if (!directorExists)
             {
-                return BadRequest(new { message = $"El Director con ID {movie.DirectorId} no existe. No se puede crear la película." });
+                return BadRequest(new { message = $"El Director con ID {movie.DirectorId} no existe." });
             }
 
+            // Guardamos la película en la BD
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
+
+            // Opcional: Si quieres que el código 201 devuelva la película con el director ya embebido en la respuesta:
+            await _context.Entry(movie).Reference(m => m.Director).LoadAsync();
 
             return CreatedAtAction(nameof(GetMovie), new { id = movie.Id }, movie);
         }

@@ -1,48 +1,51 @@
 using Microsoft.EntityFrameworkCore;
 using backend_aspnet.Data;
+using Scalar.AspNetCore; // Importamos Scalar para la interfaz gráfica
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configuración de la Base de Datos con MySQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, new MariaDbServerVersion(new Version(10, 4, 28))));
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// REGISTRAR LOS CONTROLADORES (Vital para que funcionen tus archivos CRUD)
+builder.Services.AddControllers();
+
+// CONFIGURAR CORS: Permitir que Angular (puerto 4200) consuma esta API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") // URL del front de Angular
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+// Configuración nativa de OpenAPI de Microsoft
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configurar el Pipeline de Peticiones HTTP (Middlewares)
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi(); 
+    
+    // Activamos Scalar
+    app.MapScalarApiReference(options => {
+        options.WithTitle("PCD Systems - Movies API")
+               .WithTheme(ScalarTheme.Purple);
+    });
 }
+
+// Habilitar la política de CORS que creamos arriba
+app.UseCors("AllowAngular");
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// MAPEAR RUTAS DE CONTROLADORES
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
