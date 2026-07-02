@@ -17,14 +17,14 @@ namespace backend_aspnet.Controllers
             _context = context;
         }
 
-        // 1. GET: api/directors (Leer todos)
+        // GET: api/directors (Leer todos)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Director>>> GetDirectors()
         {
             return await _context.Directors.ToListAsync();
         }
 
-        // 2. GET: api/directors/5 (Leer uno solo)
+        // GET: api/directors/5 (Leer uno solo)
         [HttpGet("{id}")]
         public async Task<ActionResult<Director>> GetDirector(int id)
         {
@@ -38,7 +38,7 @@ namespace backend_aspnet.Controllers
             return director;
         }
 
-        // 3. POST: api/directors (Crear)
+        // POST: api/directors (Crear)
         [HttpPost]
         public async Task<ActionResult<Director>> PostDirector(Director director)
         {
@@ -49,7 +49,7 @@ namespace backend_aspnet.Controllers
             return CreatedAtAction(nameof(GetDirector), new { id = director.Id }, director);
         }
 
-        // 4. PUT: api/directors/5 (Actualizar)
+        // PUT: api/directors/5 (Actualizar)
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDirector(int id, Director director)
         {
@@ -77,7 +77,7 @@ namespace backend_aspnet.Controllers
             return NoContent(); // Código 204: Actualización exitosa, no hay contenido que devolver
         }
 
-        // 5. DELETE: api/directors/5 (Eliminar)
+        // DELETE: api/directors/5 (Eliminar)
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDirector(int id)
         {
