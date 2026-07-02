@@ -6,6 +6,6 @@ export interface Movie {
   releaseYear: number;
   genre: string;
   duration: number;
-  directorId: number; // Esto es lo único que mandamos en el POST
-  director?: Director; // Esto viene incluido cuando hacemos un GET gracias al .Include() de C#
+  directorId: number;
+  director?: Director;
 }

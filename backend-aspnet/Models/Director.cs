@@ -29,8 +29,7 @@ namespace backend_aspnet.Models
         [Column("active")]
         public bool Active { get; set; } = true;
 
-        // Propiedad de navegación: Un director tiene muchas películas
-        [JsonIgnore] 
+        [JsonIgnore]
         public virtual ICollection<Movie> Movies { get; set; } = new List<Movie>();
     }
 }

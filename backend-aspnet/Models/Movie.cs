@@ -32,8 +32,6 @@ namespace backend_aspnet.Models
         [Column("director_id")]
         public int DirectorId { get; set; }
 
-        // Al ponerle el '?' y el '=' null, le decimos a .NET: 
-        // "Al recibir un POST, no me obligues a que el front mande este objeto embebido".
         [ForeignKey("DirectorId")]
         public virtual Director? Director { get; set; } = null!;
     }

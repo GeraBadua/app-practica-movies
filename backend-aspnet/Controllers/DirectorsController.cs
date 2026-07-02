@@ -11,54 +11,43 @@ namespace backend_aspnet.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        // Inyección de Dependencias: .NET nos pasa automáticamente el DbContext configurado
         public DirectorsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/directors (Leer todos)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Director>>> GetDirectors()
         {
             return await _context.Directors.ToListAsync();
         }
 
-        // GET: api/directors/5 (Leer uno solo)
         [HttpGet("{id}")]
         public async Task<ActionResult<Director>> GetDirector(int id)
         {
             var director = await _context.Directors.FindAsync(id);
 
             if (director == null)
-            {
                 return NotFound(new { message = $"Director con ID {id} no encontrado." });
-            }
 
             return director;
         }
 
-        // POST: api/directors (Crear)
         [HttpPost]
         public async Task<ActionResult<Director>> PostDirector(Director director)
         {
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
 
-            // Retorna un código 201 Created y la URL donde se puede consultar el nuevo objeto
             return CreatedAtAction(nameof(GetDirector), new { id = director.Id }, director);
         }
 
-        // PUT: api/directors/5 (Actualizar)
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDirector(int id, Director director)
         {
             if (id != director.Id)
-            {
                 return BadRequest(new { message = "El ID de la URL no coincide con el ID del cuerpo." });
-            }
 
-            // Le dice a EF que este objeto fue modificado para que actualice los campos
             _context.Entry(director).State = EntityState.Modified;
 
             try
@@ -68,32 +57,33 @@ namespace backend_aspnet.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!DirectorExists(id))
-                {
                     return NotFound(new { message = "El director a actualizar ya no existe." });
-                }
                 throw;
             }
 
-            return NoContent(); // Código 204: Actualización exitosa, no hay contenido que devolver
+            return NoContent();
         }
 
-        // DELETE: api/directors/5 (Eliminar)
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDirector(int id)
         {
             var director = await _context.Directors.FindAsync(id);
             if (director == null)
-            {
                 return NotFound(new { message = "El director a eliminar no existe." });
-            }
 
-            _context.Directors.Remove(director);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Directors.Remove(director);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("foreign key constraint"))
+            {
+                return Conflict(new { message = "No se puede eliminar el director porque tiene peliculas asociadas. Elimine primero las peliculas del director." });
+            }
 
             return Ok(new { message = "Director eliminado correctamente." });
         }
 
-        // Método auxiliar privado para verificar existencia
         private bool DirectorExists(int id)
         {
             return _context.Directors.Any(e => e.Id == id);

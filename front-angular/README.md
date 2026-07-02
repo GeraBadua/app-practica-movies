@@ -1,41 +1,28 @@
 # Frontend - Angular 22
 
-Frontend de la app de películas hecho con Angular. Usa Vite para build y Vitest para pruebas.
+SPA para el sistema de gestion de peliculas con Angular 22 y Tailwind CSS 4.
 
-## Comandos
+## Requisitos
+
+- Node.js >= 22
+- Backend corriendo en http://localhost:5163
+
+## Ejecucion
 
 ```bash
-# Instalar dependencias
 npm install
-
-# Servidor de desarrollo
 ng serve
-# Abre http://localhost:4200/
-
-# Build de producción
-ng build
-
-# Tests unitarios (Vitest)
-ng test
-
-# Generar componente/pipes/etc
-ng generate component components/movie-card
 ```
 
-## Estructura
+La app corre en http://localhost:4200/.
 
-```
-src/
-├── index.html
-├── main.ts                  # entry point
-├── styles.css               # global styles (TailwindCSS)
-└── app/
-    ├── app.ts               # root component
-    ├── app.html             # template
-    ├── app.css              # estilos del root
-    ├── app.config.ts        # config de Angular
-    ├── app.routes.ts        # rutas
-    └── app.spec.ts          # test del root
+Si el backend corre en otro puerto, ajusta `src/app/environments/environment.ts`:
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:5163/api'
+};
 ```
 
 ## Tests
@@ -43,3 +30,5 @@ src/
 ```bash
 ng test
 ```
+
+Usa Vitest. La configuracion esta en `angular.json`.

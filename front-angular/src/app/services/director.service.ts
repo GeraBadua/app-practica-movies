@@ -5,20 +5,30 @@ import { environment } from '../environments/environment';
 import { Director } from '../interfaces/director.interface';
 
 @Injectable({
-  providedIn: 'root' // Hace que el servicio esté disponible en toda la app
+  providedIn: 'root'
 })
 export class DirectorService {
-  private apiUrl = `${environment.apiUrl}/directors`; // http://localhost:5163/api/directors
+  private apiUrl = `${environment.apiUrl}/directors`;
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todos los directores
   getDirectors(): Observable<Director[]> {
     return this.http.get<Director[]>(this.apiUrl);
   }
 
-  // Guardar un nuevo director
+  getDirector(id: number): Observable<Director> {
+    return this.http.get<Director>(`${this.apiUrl}/${id}`);
+  }
+
   saveDirector(director: Director): Observable<Director> {
     return this.http.post<Director>(this.apiUrl, director);
+  }
+
+  updateDirector(id: number, director: Director): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, director);
+  }
+
+  deleteDirector(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

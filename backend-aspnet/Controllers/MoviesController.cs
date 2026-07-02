@@ -16,17 +16,14 @@ namespace backend_aspnet.Controllers
             _context = context;
         }
 
-        // GET: api/movies (Leer todas con su Director)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            // Usamos .Include para traer los datos del director asociado (Equivalente a un SQL JOIN)
             return await _context.Movies
                 .Include(m => m.Director)
                 .ToListAsync();
         }
 
-        // GET: api/movies/5 (Leer una sola con su Director)
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
@@ -35,43 +32,32 @@ namespace backend_aspnet.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (movie == null)
-            {
-                return NotFound(new { message = $"Película con ID {id} no encontrada." });
-            }
+                return NotFound(new { message = $"Pelicula con ID {id} no encontrada." });
 
             return movie;
         }
 
-        // POST: api/movies (Crear una película)
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            // Validamos que el ID del director que mandó el front realmente exista
             var directorExists = await _context.Directors.AnyAsync(d => d.Id == movie.DirectorId);
 
             if (!directorExists)
-            {
                 return BadRequest(new { message = $"El Director con ID {movie.DirectorId} no existe." });
-            }
 
-            // Guardamos la película en la BD
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            // Opcional: Si quieres que el código 201 devuelva la película con el director ya embebido en la respuesta:
             await _context.Entry(movie).Reference(m => m.Director).LoadAsync();
 
             return CreatedAtAction(nameof(GetMovie), new { id = movie.Id }, movie);
         }
 
-        // PUT: api/movies/5 (Actualizar)
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMovie(int id, Movie movie)
         {
             if (id != movie.Id)
-            {
-                return BadRequest(new { message = "El ID de la URL no coincide con el de la película." });
-            }
+                return BadRequest(new { message = "El ID de la URL no coincide con el de la pelicula." });
 
             _context.Entry(movie).State = EntityState.Modified;
 
@@ -82,29 +68,24 @@ namespace backend_aspnet.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!MovieExists(id))
-                {
-                    return NotFound(new { message = "La película no existe." });
-                }
+                    return NotFound(new { message = "La pelicula no existe." });
                 throw;
             }
 
             return NoContent();
         }
 
-        // DELETE: api/movies/5 (Eliminar)
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)
-            {
-                return NotFound(new { message = "La película no existe." });
-            }
+                return NotFound(new { message = "La pelicula no existe." });
 
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Película eliminada correctamente." });
+            return Ok(new { message = "Pelicula eliminada correctamente." });
         }
 
         private bool MovieExists(int id)

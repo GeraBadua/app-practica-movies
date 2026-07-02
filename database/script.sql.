@@ -24,4 +24,3 @@ CREATE TABLE movies (
     CONSTRAINT fk_movies_directors FOREIGN KEY (director_id) REFERENCES directors(id)
 );
 
--- TODO: agregar tabla de usuarios si la llegamos a necesitar

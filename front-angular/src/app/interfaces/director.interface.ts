@@ -1,5 +1,5 @@
 export interface Director {
-  id?: number; // El '?' significa que es opcional (no lo tenemos cuando creamos uno nuevo)
+  id?: number;
   name: string;
   nationality: string;
   age: number;

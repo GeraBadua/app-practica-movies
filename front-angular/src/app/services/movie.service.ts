@@ -8,21 +8,26 @@ import { environment } from '../environments/environment';
   providedIn: 'root'
 })
 export class MovieService {
-  private apiUrl = `${environment.apiUrl}/movies`; // http://localhost:5163/api/movies
+  private apiUrl = `${environment.apiUrl}/movies`;
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todas las películas (C# ya nos las dará con el director incluido)
   getMovies(): Observable<Movie[]> {
     return this.http.get<Movie[]>(this.apiUrl);
   }
 
-  // Guardar una película (Mandando solo el directorId gracias al ajuste que hicimos)
+  getMovie(id: number): Observable<Movie> {
+    return this.http.get<Movie>(`${this.apiUrl}/${id}`);
+  }
+
   saveMovie(movie: Movie): Observable<Movie> {
     return this.http.post<Movie>(this.apiUrl, movie);
   }
 
-  // Borrar una película por ID
+  updateMovie(id: number, movie: Movie): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, movie);
+  }
+
   deleteMovie(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
