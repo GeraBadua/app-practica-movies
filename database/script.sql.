@@ -1,0 +1,27 @@
+-- Script para crear la base de datos de peliculas
+
+-- Crear la base si no existe
+CREATE DATABASE IF NOT EXISTS pcd_movies_db;
+USE pcd_movies_db;
+
+-- Tabla de directores (va primero porque movies la referencia)
+CREATE TABLE directors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    nationality VARCHAR(50) NOT NULL,
+    age INT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+-- Tabla de peliculas
+CREATE TABLE movies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    release_year INT NOT NULL,
+    genre VARCHAR(50) NOT NULL,
+    duration INT NOT NULL, -- duracion en minutos (ej. 120 min)
+    director_id INT NOT NULL,
+    CONSTRAINT fk_movies_directors FOREIGN KEY (director_id) REFERENCES directors(id)
+);
+
+-- TODO: agregar tabla de usuarios si la llegamos a necesitar
